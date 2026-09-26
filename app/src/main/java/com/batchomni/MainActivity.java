@@ -18,5 +18,27 @@ public class MainActivity extends Activity {
         access.setOnClickListener(v->{startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));});
         setContentView(root);
     }
-    List<String> parse(String s){ArrayList<String> out=new ArrayList<>();String[] a=s.split("(?i)(?=\[SHOT\s*\d+\])");for(String x:a){x=x.trim();if(x.isEmpty())continue;x=x.replaceFirst("(?i)^\[SHOT\s*\d+\]\s*","").trim();if(!x.isEmpty())out.add(x);}if(out.isEmpty()&&!s.trim().isEmpty())out.add(s.trim());return out;}
+    List<String> parse(String s){
+        ArrayList<String> out=new ArrayList<>();
+        String normalized=s.replace("\r","");
+        String[] lines=normalized.split("\n",-1);
+        StringBuilder current=new StringBuilder();
+        boolean sawMarker=false;
+        for(String line:lines){
+            String trimmed=line.trim();
+            if(trimmed.startsWith("[SHOT")&&trimmed.indexOf("]")>5){
+                sawMarker=true;
+                if(current.length()>0){String v=current.toString().trim();if(!v.isEmpty())out.add(v);current.setLength(0);}
+                int end=trimmed.indexOf("]");
+                String rest=trimmed.substring(end+1).trim();
+                if(!rest.isEmpty())current.append(rest);
+            }else{
+                if(current.length()>0)current.append("\n");
+                current.append(line);
+            }
+        }
+        if(current.length()>0){String v=current.toString().trim();if(!v.isEmpty())out.add(v);}
+        if(!sawMarker&&out.isEmpty()&&!s.trim().isEmpty())out.add(s.trim());
+        return out;
+    }
 }
