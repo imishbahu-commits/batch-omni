@@ -6,5 +6,5 @@
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="true"
     android:canRequestFilterKeyEvents="false"
-    android:description="Automates your own YouTube Create workflow from a queued list of prompts."
+    android:description="@string/accessibility_service_description"
     android:settingsActivity="com.batchomni.MainActivity" />
